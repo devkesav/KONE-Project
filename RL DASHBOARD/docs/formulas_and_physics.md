@@ -8,110 +8,151 @@
 
 | Signal | Units | Sign Convention / Meaning |
 | :--- | :--- | :--- |
-| $P_{\text{inv\_dc}}$ | W | **DC Inverter Power**: $+ \text{ motoring}$ (power leaves DC link into motor), $- \text{ regenerating}$ (power feeds from motor back to DC link). |
-| $P_{\text{sc\_bus}}$ | W | **DC-DC Bus Power**: $+ \text{ discharge}$ (power injected into DC bus from supercapacitor), $- \text{ charge}$ (power absorbed from DC bus into supercapacitor). |
-| $P_{\text{sc\_term}}$ | W | **Supercapacitor Terminal Power**: $+ \text{ discharge}$, $- \text{ charge}$. Includes converter losses. |
-| $P_{\text{grid}}$ | W | **Rectifier Output Power**: strictly $\ge 0$ (diode rectifier prohibits reverse grid feed-in / export). |
-| $P_{\text{brake}}$ | W | **Dynamic Braking Chopper Power**: strictly $\ge 0$ (energy dissipated across $R_{\text{brake}}$ as heat). |
-| $P_{\text{aux}}$ | W | **Elevator Auxiliary Load**: strictly $\ge 0$ (cabin ventilation, lighting, door actuators, safety controller). |
-| $v$ | m/s | **Cabin Velocity**: $+ \text{ upward movement}$, $- \text{ downward movement}$. |
-| $x$ | m | **Cabin Position**: $+ \text{ upward}$, relative to ground landing floor ($0 \text{ m}$). |
-| $F$ | N | **Mechanical Rope Traction Force**: positive in the direction of cabin acceleration / lift. |
+| P_inv_dc | W | **DC Inverter Power**: positive = motoring (power leaves DC link into motor), negative = regenerating (power feeds from motor back to DC link). |
+| P_sc_bus | W | **DC-DC Bus Power**: positive = discharge (power injected into DC bus from supercapacitor), negative = charge (power absorbed from DC bus into supercapacitor). |
+| P_sc_term | W | **Supercapacitor Terminal Power**: positive = discharge, negative = charge. Includes converter losses. |
+| P_grid | W | **Rectifier Output Power**: strictly greater than or equal to 0 W (diode rectifier prohibits reverse grid feed-in/export). |
+| P_brake | W | **Dynamic Braking Chopper Power**: strictly greater than or equal to 0 W (energy dissipated across R_brake as heat). |
+| P_aux | W | **Elevator Auxiliary Load**: strictly greater than or equal to 0 W (cabin ventilation, lighting, door actuators, safety controller). |
+| v | m/s | **Cabin Velocity**: positive = upward movement, negative = downward movement. |
+| x | m | **Cabin Position**: positive = upward, relative to ground landing floor (0 m). |
+| F | N | **Mechanical Rope Traction Force**: positive in the direction of cabin acceleration/lift. |
 
 ---
 
 ## 2. Mechanical Kinematics and Motor Power (Section 4)
 
 ### Traction Elevator Dynamics
-For a car mass $m_{\text{car}}$, counterweight mass $m_{\text{cw}} = m_{\text{car}} + 0.5 \cdot m_{\text{rated}}$, and passenger car load $m_{\text{load}}$:
+For a car mass `m_car`, counterweight mass `m_cw = m_car + 0.5 * m_rated`, and passenger car load `m_load`:
 
-$$F = (m_{\text{car}} + m_{\text{load}} - m_{\text{cw}}) \cdot g + (m_{\text{car}} + m_{\text{load}} + m_{\text{cw}}) \cdot a + F_{\text{friction}} \cdot \text{sign}(v)$$
+```text
+F = (m_car + m_load - m_cw) * g
+    + (m_car + m_load + m_cw) * a
+    + F_friction * sign(v)
 
-$$P_{\text{mech}} = F \cdot v$$
+P_mech = F * v
+```
 
-- When $P_{\text{mech}} > 0$: **Motoring**
-- When $P_{\text{mech}} < 0$: **Regeneration**
-- Balanced Load Check: At $m_{\text{load}} = 0.5 \cdot m_{\text{rated}}$, $m_{\text{car}} + m_{\text{load}} - m_{\text{cw}} = 0$. In steady-state cruising ($a = 0$), $F \approx F_{\text{fric}}$, meaning net mechanical regeneration is near zero.
+- When P_mech > 0: **Motoring**
+- When P_mech < 0: **Regeneration**
+- Balanced Load Check: At m_load = 0.5 * m_rated, m_car + m_load - m_cw = 0. In steady-state cruising (a = 0), F is approximately F_fric, meaning net mechanical regeneration is near zero.
 
 ### Electrical DC Bus Drive Coupling
-$$P_{\text{inv\_dc}} = \begin{cases} \dfrac{P_{\text{mech}}}{\eta_{\text{motor}} \cdot \eta_{\text{inv}}}, & \text{if } P_{\text{mech}} \ge 0 \quad (\text{Motoring}) \\[10pt] P_{\text{mech}} \cdot \eta_{\text{motor}} \cdot \eta_{\text{inv}}, & \text{if } P_{\text{mech}} < 0 \quad (\text{Regeneration}) \end{cases}$$
+```text
+P_inv_dc = P_mech / (eta_motor * eta_inv),  if P_mech >= 0 (motoring)
+P_inv_dc = P_mech * eta_motor * eta_inv,    if P_mech < 0  (regeneration)
+```
 
 ---
 
 ## 3. DC Link Instantaneous Balance & Resistor Chopper
 
 ### Kirchhoff DC Bus Power Balance:
-$$P_{\text{grid}} + P_{\text{sc\_bus}} = P_{\text{inv\_dc}} + P_{\text{aux}} + P_{\text{brake}} + \frac{d}{dt}\left(\frac{1}{2} C_{\text{dc}} V_{\text{dc}}^2\right)$$
+```text
+P_grid + P_sc_bus = P_inv_dc + P_aux + P_brake + d(0.5 * C_dc * V_dc^2) / dt
+```
 
 ### Chopper Dissipation:
-When supercapacitor charging is limited or saturated, and $V_{\text{dc}} \ge V_{\text{chop\_on}} = 600\text{ V}$:
-$$P_{\text{brake}} = \frac{V_{\text{dc}}^2}{R_{\text{brake}}} \quad \left(R_{\text{brake}} = 20\,\Omega\right)$$
+When supercapacitor charging is limited or saturated and V_dc >= V_chop_on = 600 V:
+
+```text
+P_brake = V_dc^2 / R_brake
+R_brake = 20 ohms
+```
 
 ---
 
 ## 4. Supercapacitor Bank Physics (Section 4)
 
 ### Energy & State of Charge (SoC):
-$$E_{\text{total}} = \frac{1}{2} C_{\text{sc}} V_{\text{sc}}^2$$
-
-$$E_{\text{usable}} = \frac{1}{2} C_{\text{sc}} \left(V_{\text{max}}^2 - V_{\text{min}}^2\right)$$
-
-$$\text{SoC} = \frac{V_{\text{sc}}^2 - V_{\text{min}}^2}{V_{\text{max}}^2 - V_{\text{min}}^2} \times 100\%$$
+```text
+E_total = 0.5 * C_sc * V_sc^2
+E_usable = 0.5 * C_sc * (V_max^2 - V_min^2)
+SoC = ((V_sc^2 - V_min^2) / (V_max^2 - V_min^2)) * 100%
+```
 
 *Hand-calculated benchmark check:*
-For $C_{\text{sc}} = 15\text{ F}$, $V_{\text{min}} = 100\text{ V}$, $V_{\text{max}} = 200\text{ V}$:
-$$E_{\text{usable}} = \frac{1}{2} \times 15 \times (200^2 - 100^2) = 7.5 \times 30{,}000 = 225{,}000\text{ Joules}$$
-$$\frac{225{,}000\text{ J}}{3{,}600\text{ s/h}} = 62.50\text{ Watt-hours (Wh)}$$
+For C_sc = 15 F, V_min = 100 V, and V_max = 200 V:
+
+```text
+E_usable = 0.5 * 15 * (200^2 - 100^2)
+         = 7.5 * 30,000
+         = 225,000 joules
+
+225,000 J / 3,600 s/h = 62.50 Wh
+```
 
 ### Converter Power & Losses:
-$$I_{\text{sc}} = \frac{P_{\text{sc\_term}}}{V_{\text{sc}}}$$
-$$P_{\text{loss\_ESR}} = I_{\text{sc}}^2 \cdot \text{ESR}$$
-$$P_{\text{loss\_dcdc}} = |P_{\text{sc\_term}}| - |P_{\text{sc\_bus}}|$$
+```text
+I_sc = P_sc_term / V_sc
+P_loss_ESR = I_sc^2 * ESR
+P_loss_dcdc = abs(P_sc_term) - abs(P_sc_bus)
+```
 
 ### Ideal Boost Converter Duty Cycle & Current Ripple:
-$$D_{\text{boost}} = 1 - \frac{V_{\text{sc}}}{V_{\text{dc}}}$$
-$$\Delta I = \frac{V_{\text{sc}} \cdot D_{\text{boost}}}{L \cdot f_{\text{sw}}}$$
+```text
+D_boost = 1 - (V_sc / V_dc)
+delta_I = V_sc * D_boost / (L * f_sw)
+```
 
-### Maximum Theoretical Power at Efficiency $\eta$:
-$$P_{\text{max}} = \eta(1 - \eta) \cdot \frac{V_{\text{sc}}^2}{\text{ESR}}$$
+### Maximum Theoretical Power at Efficiency eta
+
+```text
+P_max = eta * (1 - eta) * V_sc^2 / ESR
+```
 
 ---
 
 ## 5. Energy Accounting & Validation Balance Checks (Section 9)
 
 Energies are computed by integrating 1-second trapezoidal powers:
-- **Grid Drawn**: $E_{\text{grid}} = \int P_{\text{grid}} \, dt$
-- **Motoring DC Demand**: $E_{\text{motoring\_dc}} = \int \max(P_{\text{inv\_dc}}, 0) \, dt$
-- **Gross Regeneration**: $E_{\text{regen\_gross}} = \int \max(-P_{\text{inv\_dc}}, 0) \, dt$
-- **Captured into Supercap Path**: $E_{\text{captured\_bus}} = \int \max(-P_{\text{sc\_bus}}, 0) \, dt$
-- **Burned in Dynamic Brake**: $E_{\text{brake}} = \int P_{\text{brake}} \, dt$
-- **Discharged from Supercap**: $E_{\text{sc\_out}} = \int \max(P_{\text{sc\_bus}}, 0) \, dt$
-- **Counterfactual Energy Saved**: $E_{\text{saved}} = E_{\text{grid\_baseline}} - E_{\text{grid\_actual}}$
+- **Grid Drawn**: E_grid = integral(P_grid dt)
+- **Motoring DC Demand**: E_motoring_dc = integral(max(P_inv_dc, 0) dt)
+- **Gross Regeneration**: E_regen_gross = integral(max(-P_inv_dc, 0) dt)
+- **Captured into Supercap Path**: E_captured_bus = integral(max(-P_sc_bus, 0) dt)
+- **Burned in Dynamic Brake**: E_brake = integral(P_brake dt)
+- **Discharged from Supercap**: E_sc_out = integral(max(P_sc_bus, 0) dt)
+- **Counterfactual Energy Saved**: E_saved = E_grid_baseline - E_grid_actual
 
 ### Automated Audit Check Gate:
 Residual check computed per trip and per day:
-$$\text{Residual}_{\text{regen}} = \frac{|E_{\text{regen\_gross}} - (E_{\text{captured\_bus}} + E_{\text{brake}} + \Delta E_{C_{\text{dc}}})|}{\max(E_{\text{regen\_gross}}, E_{\text{captured\_bus}} + E_{\text{brake}})}$$
+```text
+Residual_regen =
+  abs(E_regen_gross - (E_captured_bus + E_brake + delta_E_Cdc))
+  / max(E_regen_gross, E_captured_bus + E_brake)
+```
 
-> **Section 9 Mandatory Gate:** If $\text{Residual} > 1.5\%$, the record is flagged with `DATA_QUALITY_WARNING` and immediately exposed on the UI alerts log.
+> **Section 9 Mandatory Gate:** If Residual > 1.5%, the record is flagged with `DATA_QUALITY_WARNING` and immediately exposed on the UI alerts log.
 
 ---
 
 ## 6. Supercapacitor Health & Diagnostics (Section 10)
 
 ### Online Capacitance Estimation:
-Filtered over stable current segments where $|\Delta V| \ge 1.0\text{ V}$:
-$$C_{\text{est}} = \frac{\int I_{\text{sc}} \, dt}{\Delta V_{\text{sc}}}$$
+Filtered over stable current segments where absolute delta-V >= 1.0 V:
+
+```text
+C_est = integral(I_sc dt) / delta_V_sc
+```
 
 ### Online ESR Estimation:
 Computed at current step transients:
-$$\text{ESR}_{\text{est}} = \frac{\Delta V_{\text{instant}}}{\Delta I_{\text{sc}}}$$
+```text
+ESR_est = delta_V_instant / delta_I_sc
+```
 
 ### State of Health (SOH):
-$$\text{SOH}_C = \frac{C_{\text{est}}}{C_0} \times 100\% \qquad \text{SOH}_{\text{ESR}} = \frac{\text{ESR}_0}{\text{ESR}_{\text{est}}} \times 100\%$$
-$$\text{SOH}_{\text{overall}} = \min(\text{SOH}_C, \text{SOH}_{\text{ESR}})$$
-- **End-of-Life (EOL) Threshold**: $\text{SOH}_C \le 80\%$ or $\text{ESR}_{\text{est}} \ge 200\% \times \text{ESR}_0$.
+```text
+SOH_C = (C_est / C_0) * 100%
+SOH_ESR = (ESR_0 / ESR_est) * 100%
+SOH_overall = min(SOH_C, SOH_ESR)
+```
+
+- **End-of-Life (EOL) Threshold**: SOH_C <= 80% or ESR_est >= 200% * ESR_0.
 
 ### Thermal Model & Arrhenius Aging Acceleration:
-$$T_{\text{sc}} = T_{\text{amb}} + R_{\text{th}} \cdot I_{\text{rms}}^2 \cdot \text{ESR}$$
-$$\text{Aging Acceleration Factor } A_T = 2^{\frac{T_{\text{sc}} - T_{\text{ref}}}{10}}$$
+```text
+T_sc = T_amb + R_th * I_rms^2 * ESR
+A_T = 2 ^ ((T_sc - T_ref) / 10)
+```
 RUL confidence interval is computed based on nominal vs high thermal stress envelopes.
