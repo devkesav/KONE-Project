@@ -52,7 +52,7 @@ The system is organized as a high-performance modular monorepo supporting hardwa
 
 - **`adapters/`**: Simulator adapter interface (`SimulatorAdapter`) exposing `reset()`, `step(P_sc_ref, dt)`, and `get_static_params()`.
   - `WebSimAdapter`: High-fidelity discrete physical model mirroring browser simulator dynamics.
-  - `FastElevatorSurrogate`: Average-value numerical model running $> 100{,}000$ steps/s passing the validation gate.
+  - `FastElevatorSurrogate`: Average-value numerical model running more than 100,000 steps/s and passing the validation gate.
   - `FileReplayAdapter`: Replays historical field CSV/JSON telemetry recordings.
   - `MatlabEngineAdapter`: Integration stub for MATLAB/Simulink Simscape models.
   - `FmuAdapter`: FMI 2.0 co-simulation FMU bridge for industrial drive benches.
@@ -62,12 +62,12 @@ The system is organized as a high-performance modular monorepo supporting hardwa
   - `supercap.py`: Bank scaling, usable energy, ESR losses, boost duty, and maximum power limits.
   - `accounting.py`: Section 9 energy integrations, counterfactual savings engine, and balance residual audits.
   - `tariffs.py`: Multi-tier Time-of-Use (ToU) billing and rolling maximum demand charges.
-  - `health.py`: Online $C = \int i \, dt / \Delta V$, ESR $= \Delta V / \Delta I$, first-order thermal model, and degradation injector.
+  - `health.py`: Online C estimation from integrated current divided by voltage change, ESR estimation from voltage change divided by current change, first-order thermal model, and degradation injector.
 - **`forecasting/`**:
   - `traffic_generator.py`: Stochastic building traffic simulator (morning peak, lunch, evening peak, inter-floor, night).
   - `demand_forecaster.py`: Quantile LightGBM/XGBoost predictor outputting P10/P50/P90 forward demand and planned charge/discharge schedules.
 - **`rl/`**: Safe Reinforcement Learning environment and benchmarks:
-  - `safety_supervisor.py`: Hard non-learned physical projection clipping action $P_{\text{sc\_ref}}$.
+  - `safety_supervisor.py`: Hard non-learned physical projection clipping action `P_sc_ref`.
   - `elevator_env.py`: Standard Gymnasium environment with normalized observation spaces and multi-objective rewards.
   - `trainer.py`: SAC/TD3 policy trainer with automated TorchScript ONNX export.
   - `baselines.py`: Conventional B0, Rule-Based B1, and Perfect-Knowledge MPC B2 baselines.
@@ -86,20 +86,24 @@ The system is organized as a high-performance modular monorepo supporting hardwa
 
 Every 1-second physical step:
 1. **Kinematic State Observation**:
-   - Current velocity $v$, position $x$, floor, load $m_{\text{load}}$, state $\text{lift\_state}$, $V_{\text{dc}}$, $V_{\text{sc}}$, and $\text{SoC}$.
+   - Current velocity `v`, position `x`, floor, load `m_load`, state `lift_state`, DC voltage `V_dc`, supercapacitor voltage `V_sc`, and state of charge `SoC`.
 2. **Demand Forecast & Tariff Ingestion**:
-   - Time-of-day clock, forward 15-min and 60-min demand quantiles ($P_{10}, P_{50}, P_{90}$), and current ToU rate block.
+   - Time-of-day clock, forward 15-minute and 60-minute demand quantiles (`P10`, `P50`, `P90`), and current ToU rate block.
 3. **Policy Evaluation**:
-   - Selected controller (RL SAC, Rule-Based B1, or MPC B2) proposes raw command $P_{\text{sc\_ref, raw}}$.
+   - Selected controller (RL SAC, Rule-Based B1, or MPC B2) proposes raw command `P_sc_ref_raw`.
 4. **Safety Supervisor Enactment**:
-   - Verified against physical bounds: $V_{\text{min}} \le V_{\text{sc}} \le V_{\text{max}}$, $|I_{\text{sc}}| \le I_{\text{max}}$, $T_{\text{sc}} < 65^\circ\text{C}$, converter duty cycle $D \in [0.05, 0.95]$.
-   - If constraint violated, hard-projects $P_{\text{sc\_ref}}$ to the boundary and logs clip reason.
+   - Verified against physical bounds: `V_min <= V_sc <= V_max`, absolute `I_sc <= I_max`, `T_sc < 65 deg C`, and converter duty cycle `D` between `0.05` and `0.95`.
+   - If a constraint is violated, the supervisor hard-projects `P_sc_ref` to the boundary and logs the clip reason.
    - Fallback: If policy outputs `NaN` or data connection drops, falls back to safe rule-based controller.
 5. **Drive Execution**:
    - Step executed on physical elevator / adapter.
 6. **Energy Accounting & Balance Check**:
    - Trapezoidal integration. Check residual:
-     $$\text{Residual} = \frac{|E_{\text{regen}} - (E_{\text{captured}} + E_{\text{brake}} + \Delta E_{C_{\text{dc}}})|}{\max(E_{\text{regen}}, E_{\text{captured}} + E_{\text{brake}})}$$
-   - If $\text{Residual} > 1.5\%$, system raises `DATA_QUALITY_WARNING`.
+     ```text
+     Residual =
+       abs(E_regen - (E_captured + E_brake + delta_E_Cdc))
+       / max(E_regen, E_captured + E_brake)
+     ```
+   - If `Residual > 1.5%`, the system raises `DATA_QUALITY_WARNING`.
 7. **Broadcast & Store**:
    - Dispatched via WebSocket to React frontend and persisted in database.

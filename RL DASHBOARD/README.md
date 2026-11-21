@@ -14,8 +14,8 @@ An industrial-grade energy management system for traction elevators featuring a 
 ### Automated Launch (Production Server + Frontend)
 ```bash
 # Clone the repository
-git clone https://github.com/kone/elevator-supercap-manager.git
-cd elevator-supercap-manager
+git clone https://github.com/devkesav/KONE-Project.git
+cd KONE-Project/"RL DASHBOARD"
 
 # Run the unified application server
 python run.py
@@ -39,11 +39,11 @@ python -m pytest -v
 ```
 All **30 tests** cover:
 - Section 4 exact physical formulas with hand-calculated benchmark cases (e.g. 15 F, 100V → 200V = 62.50 Wh).
-- Energy balance residuals ($\text{residual} < 1.5\%$ on all trips).
-- Surrogate validation gate: $> 100{,}000$ steps/s speed, $< 3\%$ energy error, $< 2\%$ $V_{\text{sc}}$ RMSE.
+- Energy balance residuals (`residual < 1.5%` on all trips).
+- Surrogate validation gate: more than 100,000 steps/s, less than 3% energy error, and less than 2% `V_sc` RMSE.
 - Section 8 Honesty Requirement: rule-based baseline comparison and automatic defaulting to B1 if RL does not beat B1.
 - Safety Supervisor constraint fuzzing (`NaN`, inf, extreme loads) and zero-violation hard clipping.
-- Supercapacitor health estimation ($C, \text{ESR}$, thermal model, EOL alerts, and degradation injector).
+- Supercapacitor health estimation (`C`, `ESR`, thermal model, EOL alerts, and degradation injector).
 - Backend REST endpoints and ReportLab PDF/CSV exports.
 
 ---
@@ -135,23 +135,23 @@ adapter = FmuAdapter(fmu_path="bin/kone_drive_fmi2.fmu")
 
 | Signal | Units | Sign Convention |
 | :--- | :--- | :--- |
-| `P_inv_dc` | W | $+ \text{ motoring}$ (power into motor), $- \text{ regenerating}$ (power from motor to DC link) |
-| `P_sc_bus` | W | $+ \text{ discharge}$ (power out of supercap into DC link), $- \text{ charge}$ (absorbed into supercap) |
-| `P_sc_term`| W | $+ \text{ discharge}$, $- \text{ charge}$ (terminal power including internal ESR losses) |
-| `P_grid` | W | $\ge 0$ strictly (diode rectifier prohibits grid export) |
-| `P_brake`| W | $\ge 0$ strictly (heat dissipated across 20 $\Omega$ dynamic brake resistor) |
-| `P_aux` | W | $\ge 0$ strictly (cabin lighting, ventilation, and controller power) |
-| `velocity` | m/s | $+ \text{ moving up}$, $- \text{ moving down}$ |
+| `P_inv_dc` | W | Positive = motoring (power into motor); negative = regenerating (power from motor to DC link) |
+| `P_sc_bus` | W | Positive = discharge (power out of supercap into DC link); negative = charge (absorbed into supercap) |
+| `P_sc_term`| W | Positive = discharge; negative = charge (terminal power including internal ESR losses) |
+| `P_grid` | W | Must be >= 0 (diode rectifier prohibits grid export) |
+| `P_brake`| W | Must be >= 0 (heat dissipated across the 20-ohm dynamic brake resistor) |
+| `P_aux` | W | Must be >= 0 (cabin lighting, ventilation, and controller power) |
+| `velocity` | m/s | Positive = moving up; negative = moving down |
 
 ---
 
 ## 6. Known Limitations & Sim-to-Real Gap
 
 1. **Diode Rectifier No-Load Float Voltage:**
-   The browser simulator models a 3-phase diode rectifier with an open-circuit voltage around $\approx 533-540\text{ V}$. In physical substations, grid voltage fluctuates with distribution tap changers ($\pm 10\%$), which will slightly vary the baseline rectifier threshold.
+   The browser simulator models a 3-phase diode rectifier with an open-circuit voltage around 533-540 V. In physical substations, grid voltage fluctuates with distribution tap changers (+/-10%), which will slightly vary the baseline rectifier threshold.
 2. **Supercapacitor Internal Equivalent Series Resistance (ESR):**
    The browser simulator models a simplified internal resistance. In physical supercapacitor modules (e.g., Maxwell 48V/165F modules), ESR varies non-linearly with cell temperature and operating frequency. The health estimator accounts for this using online step-transient estimation.
 3. **Shaft Air Drag and Guide Rail Friction:**
-   Kinematic friction is modeled with a Coulomb + viscous approximation ($300\text{ N} \cdot \tanh(20v)$). In tall shafts ($> 100\text{ m}$), aerodynamic piston effects become significant at speeds above $4\text{ m/s}$.
+   Kinematic friction is modeled with a Coulomb + viscous approximation (`300 N * tanh(20v)`). In tall shafts (>100 m), aerodynamic piston effects become significant at speeds above 4 m/s.
 4. **Thermal Dissipation Dynamics:**
-   Thermal resistance $R_{\text{th}} = 0.85\text{ K/W}$ and heat capacity $C_{\text{th}} = 1200\text{ J/K}$ are configured as `[ASSUMED]` constants pending physical wind-tunnel testbench characterization.
+   Thermal resistance `R_th = 0.85 K/W` and heat capacity `C_th = 1200 J/K` are configured as `[ASSUMED]` constants pending physical wind-tunnel testbench characterization.
