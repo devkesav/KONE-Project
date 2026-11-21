@@ -1,0 +1,7 @@
+#ifndef Elevator_simulation_regenerative_braking_completed_capi_h_
+#define Elevator_simulation_regenerative_braking_completed_capi_h_
+#include "Elevator_simulation_regenerative_braking_completed.h"
+extern void
+Elevator_simulation_regenerative_braking_completed_InitializeDataMapInfo ( void
+) ;
+#endif

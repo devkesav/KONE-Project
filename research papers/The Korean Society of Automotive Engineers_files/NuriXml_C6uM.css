@@ -1,0 +1,232 @@
+@charset "UTF-8";
+/*
+	StyleSheet for Full Text XML Service
+	XML 부분에 대한 스타일 정의
+	누리미디어, 2013.
+*/
+
+/* 기본 */
+img { border:0px; }
+
+/* XML 부분 전체 */
+div.NURIMEDIAXML {
+     font-size:    11.0pt;
+     line-height: 180%;
+     margin: 3px;
+}
+
+div.NURIMEDIAXML p {
+    font-family: tahoma, "Times New Roman", "HYHWPEQ" !important;
+	text-align:justify;
+	font-size:11.0pt;
+	line-height: 130%;
+	margin:0px 0px 15px 10px;
+}
+
+div.NURIMEDIAXML table {
+	width:100%;
+}
+
+div.NURIMEDIAXML img {
+	cursor:pointer;
+}
+
+/* 상단과 하단 */
+.fm  {
+	 font-size:   11pt;
+     line-height: 130%;
+     /* background: #eeeeff;*/
+}
+
+/* 본문 */
+.body
+     {
+     font-size:   11.0pt;
+     line-height: 130%;
+     }
+
+/* back 부분 = 참고문헌 */
+.bm td, .bm span, .bm th{
+	 font-size: 10pt;
+     line-height: 130%;
+	 word-break: break-word;
+     /*background: #eeffee; */
+	 }
+.body p{margin:0px 0px 15px 10px;}/*2014년12월23일추가*/
+.bm p{margin:0px 0px 10px 10px !important; font-size:12px !important; line-height:180% !important;}/*2014년12월23일추가*/
+/* rules */
+hr.part-rule {
+    width:100%; 
+	margin:15px 0px 15px 0px;
+	align: center;
+	noshade: noshade;
+	color:#cccccc;
+	}
+
+hr.section-rule {
+    width:100%;
+	margin:15px 0px 15px 0px;
+	align: center;
+	noshade: noshade;
+	color:#cccccc;
+	size:1px;
+    }
+
+/* 참고문헌 */
+.xref {
+    color: red;
+    }
+
+/* 일반 문장 */
+.gen {
+    color: #0072bc;
+    margin-left: 0pt;
+    font-weight: normal;
+    }
+
+
+/* --------------- 제목별 -------------------- */
+/* article-type */
+.article-type {
+	color: #0072bc;
+	font-size:16px;
+	font-weight:bold;
+}
+
+/* 레벨 1: document title */
+.tl-document {
+   display: block;
+   font-size: 18pt;
+   font-weight: bold;
+   color: #004a80;
+   line-height: 130%;
+   text-align: left;
+   }
+
+/* 레벨 2: subtitle */
+.tl-document-subtitle {
+   display: block;
+   font-size: 14pt;
+   font-weight: bold;
+   color: #666666;
+   line-height: 100%;
+   text-align: left;
+   }
+
+/* 레벨 2: main document parts */
+.tl-main-part {
+   display: block;
+   font-size: 16pt;
+   font-weight: bold;
+   color: #004a80;
+   line-height: 220%;
+
+   }
+
+/* 레벨 3: 메인부분 제목 */
+ .tl-section-level {
+   display: block;
+   font-size: 18pt;
+   font-weight: bold;
+   color: #004a80;
+   line-height: 180%;
+   }
+
+/* 레벨 4 : 메인부분 작은 제목 */
+.tl-lowest-section {
+   display: block;
+   font-size: 11.0pt;
+   font-weight: bold;
+   color: #004a80;
+   line-height: 160%;
+   }
+.tl-lowest-section1 {
+   display: block;
+   font-size: 11.0pt;
+   font-weight: bold;
+   color: #004a80;
+   line-height: 160%;
+   margin-bottom:10px; margin-left:3px;
+   }/*2014년12월23일추가*/
+
+/* 기본 제목 */
+.tl-default {
+   display: block;
+   font-size: 11.0pt;
+   font-style: italic;
+   color: #004a80;
+   line-height: 150%;
+   margin-top: 5pt;
+}
+.tl-inline {
+   display: inline-block;
+   font-size: 11.0pt;
+/*
+   font-style: italic;
+   margin-top: 5pt;
+   line-height: 150%;
+*/
+   color: #004a80;
+}
+.tl-inline1 {
+   display: inline-block;
+   font-size: 11.0pt;
+/*
+   font-style: italic;
+   margin-top: 5pt;
+   line-height: 150%;
+*/
+   color: #004a80;
+   margin-bottom:8px; margin-left:5px;
+}/*2014년12월23일추가*/
+
+.fig {
+	display:block; margin:5px 0 5px 0; text-align:center; width:100%;
+}
+.monospace {
+	font-family: monospace;
+}
+
+.overline{
+	text-decoration: overline;
+}
+
+.capture-id {}
+
+.take-note{
+	color:red;
+}
+
+.au-label{
+	vertical-align:super;
+	font-size:7pt;
+}
+
+.fn-label{
+	vertical-align:super;
+	font-size:7pt;
+}
+
+.label{
+	font-weight:bold;
+	white-space:nowrap;
+	text-align:left;
+}
+
+.li-title{
+	font-weight:bold;
+	font-size: 11.0pt;
+	margin-left:2em;
+}
+
+
+.athr_name {
+	font-family:sans-serif; 
+	font-size:14px; 
+	font-weight:bold; 
+	line-height:24px; 
+}
+/* xml 이미지_2014.12.15 성아영 */
+#F1 img,#F2 img,#F3 img,#F4 img,#F5 img,#F6 img,#F7 img,#F8 img,#F9 img,#F10 img,#F11 img,#F12 img,#F13 img,#F14 img,#F15 img,#F16 img,#F17 img,#F18 img,#F19 img,#F20 img,#F21 img,#F22 img,#F23 img,#F24 img,#F25 img,#F26 img,#F27 img,#F28 img,#F29 img,#F30 img,#F31 img,#F32 img,#F33 img,#F34 img,#F35 img,#F36 img,#F37 img,#F38 img,#F39 img,#F40 img,#F41 img,#F42 img,#F43 img,#F44 img,#F45 img,#F46 img,#F47 img,#F48 img,#F49 img,#F50 img,#F51 img,#F52 img,#F53 img,#F54 img,#F55 img,#F56 img,#F57 img,#F58 img,#F59 img,#F60 img,#F61 img,#F62 img,#F63 img,#F64 img,#F65 img,#F66 img,#F67 img,#F68 img,#F69 img,#F70 img,#F71 img,#F72 img,#F73 img,#F74 img,#F75 img,#F76 img,#F77 img,#F78 img,#F79 img,#F80 img,#F81 img,#F82 img,#F83 img,#F84 img,#F85 img,#F86 img,#F87 img,#F88 img,#F89 img,#F90 img,#F91 img,#F92 img,#F93 img,#F94 img,#F95 img,#F96 img,#F97 img,#F98 img,#F99 img,#F100 img{max-width:400px; border:2px solid #cccccc; padding:10px; margin-top:10px;}
+
+.graphic_p {vertical-align:middle; padding:0px !important; border:0px !important; margin-top:0px !important}

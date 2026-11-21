@@ -1,0 +1,5 @@
+@font-face {
+    font-family: 'NanumBarunGothicYetHangul';
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumBarunGothicYetHangul/NanumBarunGothic-YetHangul.eot);
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumBarunGothicYetHangul/NanumBarunGothic-YetHangul.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumBarunGothicYetHangul/NanumBarunGothic-YetHangul.woff2) format("woff2"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumBarunGothicYetHangul/NanumBarunGothic-YetHangul.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/NanumBarunGothicYetHangul/NanumBarunGothic-YetHangul.ttf) format("truetype");
+}
