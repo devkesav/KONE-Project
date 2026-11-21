@@ -17,15 +17,15 @@ The goal is to study and demonstrate how regenerative braking energy can be capt
 
 The repository includes two MATLAB/Simulink model folders:
 
-- [simulation 1](/home/kesava-d-raj/projects/KONE-Project/simulation%201/) — completed regenerative-braking elevator simulation and backup model.
-- [simulation 2](/home/kesava-d-raj/projects/KONE-Project/simulation%202/) — three-phase elevator model work.
-- [phase6_regerative.slx](/home/kesava-d-raj/projects/KONE-Project/RL%20DASHBOARD/phase6_regerative.slx) — later phase of the regenerative system inside the RL dashboard project.
+- [simulation 1](simulation%201/) — completed regenerative-braking elevator simulation and backup model.
+- [simulation 2](simulation%202/) — three-phase elevator model work.
+- [phase6_regerative.slx](RL%20DASHBOARD/phase6_regerative.slx) — later phase of the regenerative system inside the RL dashboard project.
 
 These models provide the mechanical and electrical basis for the workbench and the Python simulation.
 
 ### 2. RL and energy-management dashboard
 
-The main application is in [RL DASHBOARD](/home/kesava-d-raj/projects/KONE-Project/RL%20DASHBOARD/).
+The main application is in [RL DASHBOARD](RL%20DASHBOARD/).
 
 It provides:
 
@@ -48,7 +48,7 @@ The dashboard includes tabs for live operation, energy waterfall, savings and pa
 
 ### 3. Hardware and electrical schematic workbench
 
-The application in [hardware_dashboard](/home/kesava-d-raj/projects/KONE-Project/hardware_dashboard/) is a separate React-based electrical workbench.
+The application in [hardware_dashboard](hardware_dashboard/) is a separate React-based electrical workbench.
 
 It visualizes:
 
@@ -141,7 +141,7 @@ cd "RL DASHBOARD"
 python run.py
 ```
 
-Or run [start.bat](/home/kesava-d-raj/projects/KONE-Project/RL%20DASHBOARD/start.bat).
+Or run [start.bat](RL%20DASHBOARD/start.bat).
 
 ### Linux or macOS
 
@@ -262,15 +262,15 @@ The main dashboard is also the most developed Python application; the hardware w
 
 ## Configuration
 
-The primary parameter file is [params.yaml](/home/kesava-d-raj/projects/KONE-Project/RL%20DASHBOARD/config/params.yaml). It contains lift, motor, grid, brake, supercapacitor, DC-DC converter, tariff, and RL reward settings.
+The primary parameter file is [params.yaml](RL%20DASHBOARD/config/params.yaml). It contains lift, motor, grid, brake, supercapacitor, DC-DC converter, tariff, and RL reward settings.
 
-Additional technical documentation is available in [RL DASHBOARD/docs](/home/kesava-d-raj/projects/KONE-Project/RL%20DASHBOARD/docs/):
+Additional technical documentation is available in [RL DASHBOARD/docs](RL%20DASHBOARD/docs/):
 
-- [architecture.md](/home/kesava-d-raj/projects/KONE-Project/RL%20DASHBOARD/docs/architecture.md)
-- [formulas_and_physics.md](/home/kesava-d-raj/projects/KONE-Project/RL%20DASHBOARD/docs/formulas_and_physics.md)
-- [evaluation_report.md](/home/kesava-d-raj/projects/KONE-Project/RL%20DASHBOARD/docs/evaluation_report.md)
-- [surrogate_validation_report.md](/home/kesava-d-raj/projects/KONE-Project/RL%20DASHBOARD/docs/surrogate_validation_report.md)
+- [architecture.md](RL%20DASHBOARD/docs/architecture.md)
+- [formulas_and_physics.md](RL%20DASHBOARD/docs/formulas_and_physics.md)
+- [evaluation_report.md](RL%20DASHBOARD/docs/evaluation_report.md)
+- [surrogate_validation_report.md](RL%20DASHBOARD/docs/surrogate_validation_report.md)
 
 ## License
 
-See [RL DASHBOARD/LICENSE](/home/kesava-d-raj/projects/KONE-Project/RL%20DASHBOARD/LICENSE) for the license covering the RL dashboard project.
+See [RL DASHBOARD/LICENSE](RL%20DASHBOARD/LICENSE) for the license covering the RL dashboard project.
